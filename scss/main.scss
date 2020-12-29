@@ -1,0 +1,85 @@
+//Import the individual modules
+@import './resets';
+@import './variables';
+
+//Can use function weight, this can reduce some code, if map get is used multiple times
+@function weight($weight-name){
+    @return map-get($font-weights , $weight-name );
+}
+
+//If the following code is used in multiple places then a mixin can be reused to reduce the code
+@mixin flexCenter($direction) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: $direction;
+}
+
+@mixin theme($light-theme: true) {
+    @if $light-theme {
+        background: lighten($primary-color, 100%);
+        color: darken($text-color, 100%);
+    }
+}
+
+@mixin mobile {
+    @media (max-width: $mobile) {
+        @content;
+    }
+}
+
+body {
+    background: $primary-color;
+    color: $text-color;
+}
+
+.main {
+    /*display: flex;
+    justify-content: center;
+    align-items: center;*/
+    //@include flexCenter(column);
+    @include flexCenter(row);
+
+    //Normal css, math operations example
+    //width: calc(80% - 40%);
+    //SASS we can use operations directly
+    width: 80% - 40%;
+    margin: 0 auto;
+
+    //Nested styling
+    /*p {
+        font-weight: map-get($font-weights , bold );        
+    }*/
+    /*.main_paragraph {
+        font-weight: map-get($font-weights , bold );
+    }*/
+
+    #{&}_paragraph1 {
+        //font-weight: map-get($font-weights , bold );
+        font-weight: weight( bold );
+
+        &:hover {
+            color: rgb(168, 194, 51);
+        }
+    }
+
+    #{&}_paragraph2 {
+        //Reuse existing css using extend
+        @extend .main_paragraph1;
+        &:hover {
+            color: $accent-color;
+        }
+
+    }
+
+    @include mobile {
+        flex-direction: column;
+    }
+
+}
+
+
+.light {
+    //@include theme($light-theme: false) //This will not apply styles from theme
+    @include theme($light-theme: true)
+}
